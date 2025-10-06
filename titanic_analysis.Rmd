@@ -1,6 +1,6 @@
 ---
 title: "Titanic: Machine Learning from Disaster - Comprehensive Analysis"
-author: "Professional Data Analysis"
+author: "N-Garai"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -48,8 +48,8 @@ library(pROC)           # ROC curves
 ```{r load_data}
 # Load the Titanic dataset
 # Note: Download from https://www.kaggle.com/c/titanic/data
-train <- read.csv("train.csv", stringsAsFactors = FALSE)
-test <- read.csv("test.csv", stringsAsFactors = FALSE)
+train <- read.csv("titanic/train.csv", stringsAsFactors = FALSE)
+test <- read.csv("titanic/test.csv", stringsAsFactors = FALSE)
 
 # Store test PassengerId for final submission
 test_ids <- test$PassengerId
@@ -1138,76 +1138,8 @@ grid.arrange(
 )
 ```
 
-## 11.11 Prediction Distribution Analysis
 
-```{r prediction_distribution, fig.width=14, fig.height=8}
-# Analyze predictions on test set
-test_with_predictions <- test_processed %>%
-  select(all_of(features)) %>%
-  mutate(
-    Predicted_Survival = final_predictions,
-    PassengerId = test_ids
-  ) %>%
-  left_join(test %>% select(PassengerId, Pclass, Sex, Age, Fare), by = "PassengerId")
-
-p1 <- ggplot(test_with_predictions, aes(x = factor(Predicted_Survival), fill = factor(Predicted_Survival))) +
-  geom_bar() +
-  geom_text(stat = "count", aes(label = ..count..), vjust = -0.5, fontface = "bold", size = 5) +
-  scale_fill_manual(values = c("0" = "#d62728", "1" = "#2ca02c"),
-                    labels = c("Predicted Dead", "Predicted Survived")) +
-  labs(title = "Predicted Survival Distribution on Test Set",
-       x = "Prediction", y = "Count", fill = "Prediction") +
-  theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
-        legend.position = "bottom")
-
-p2 <- test_with_predictions %>%
-  group_by(Pclass, Predicted_Survival) %>%
-  summarise(Count = n(), .groups = "drop") %>%
-  ggplot(aes(x = factor(Pclass), y = Count, fill = factor(Predicted_Survival))) +
-  geom_bar(stat = "identity", position = "dodge") +
-  geom_text(aes(label = Count), position = position_dodge(width = 0.9), 
-            vjust = -0.5, fontface = "bold") +
-  scale_fill_manual(values = c("0" = "#d62728", "1" = "#2ca02c"),
-                    labels = c("Predicted Dead", "Predicted Survived")) +
-  labs(title = "Predicted Survival by Class",
-       x = "Passenger Class", y = "Count", fill = "Prediction") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-
-p3 <- test_with_predictions %>%
-  group_by(Sex, Predicted_Survival) %>%
-  summarise(Count = n(), .groups = "drop") %>%
-  group_by(Sex) %>%
-  mutate(Percentage = Count / sum(Count) * 100) %>%
-  ggplot(aes(x = Sex, y = Count, fill = factor(Predicted_Survival))) +
-  geom_bar(stat = "identity", position = "dodge") +
-  geom_text(aes(label = paste0(round(Percentage, 1), "%")), 
-            position = position_dodge(width = 0.9), vjust = -0.5, fontface = "bold") +
-  scale_fill_manual(values = c("0" = "#d62728", "1" = "#2ca02c"),
-                    labels = c("Predicted Dead", "Predicted Survived")) +
-  labs(title = "Predicted Survival by Gender",
-       x = "Gender", y = "Count", fill = "Prediction") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-
-p4 <- test_with_predictions %>%
-  filter(!is.na(Age)) %>%
-  ggplot(aes(x = Age, fill = factor(Predicted_Survival))) +
-  geom_histogram(bins = 30, alpha = 0.7, position = "identity") +
-  scale_fill_manual(values = c("0" = "#d62728", "1" = "#2ca02c"),
-                    labels = c("Predicted Dead", "Predicted Survived")) +
-  labs(title = "Age Distribution of Predictions",
-       x = "Age", y = "Count", fill = "Prediction") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-
-grid.arrange(p1, p2, p3, p4, ncol = 2,
-             top = grid::textGrob("Test Set Prediction Analysis", 
-                                  gp = grid::gpar(fontsize = 16, fontface = "bold")))
-```
-
-## 11.12 Summary Statistics Visualization
+## 11.11 Summary Statistics Visualization
 
 ```{r summary_stats_viz, fig.width=14, fig.height=6}
 # Create summary statistics comparison
