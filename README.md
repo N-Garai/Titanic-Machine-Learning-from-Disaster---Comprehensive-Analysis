@@ -121,6 +121,7 @@ The best performing model (Random Forest) achieved an accuracy of 83.24% in pred
 ## Credits
 
 Created by: N-Garai
+
 Dataset: [Kaggle Titanic Competition](https://www.kaggle.com/c/titanic)
 
 ## License
