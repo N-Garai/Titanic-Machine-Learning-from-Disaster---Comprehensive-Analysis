@@ -1474,8 +1474,3 @@ The predictive model can be further improved through ensemble methods and hyperp
 - [ ] Deploy model as web application with Shiny
 
 **Thank you for using this comprehensive Titanic analysis!** 🚢
-
-```12),
-        legend.position = "bottom")
-```
-
